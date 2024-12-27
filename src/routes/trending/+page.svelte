@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 
 	let trending: {
 		img: string;
@@ -25,7 +26,7 @@
 						?.href.replace('/category/', '/watch?id=');
 					let release = li.querySelector('.released')?.textContent;
 
-					if(img.length === 0 || name.length === 0 || !href) return;
+					if (img.length === 0 || name.length === 0 || !href) return;
 
 					trending.push({
 						img,
@@ -41,7 +42,7 @@
 <div class="trending">
 	{#each trending as { img, name, href, release }, i}
 		<div class="trending-item" style="animation-delay: {i * 0.1}s">
-			<a {href}>
+			<a {href} onclick={() => goto(href ?? '')}>
 				<img src={img} alt={name} />
 				<div class="trending-item-info">
 					<h3>{name}</h3>

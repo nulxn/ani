@@ -70,6 +70,14 @@
 			height: 100%;
 			transition: all 0.3s ease;
 		}
+
+		a {
+			color: var(--fgColor-link);
+		}
+
+		a:hover {
+			color: var(--fgColor-accent-hover);
+		}
 	</style>
 </svelte:head>
 

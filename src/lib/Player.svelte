@@ -59,8 +59,8 @@
 		<video id="video" controls> </video>
 	{/if}
 	<div class="control">
-		<button onclick={() => _('#video', _doc).currentTime(10)}>Forward</button>
 		<button onclick={() => _('#video', _doc).currentTime(-10)}>Backward</button>
+		<button onclick={() => _('#video', _doc).currentTime(10)}>Forward</button>
 	</div>
 </div>
 

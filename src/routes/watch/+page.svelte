@@ -3,6 +3,7 @@
 	import CryptoJS from 'crypto-js';
 	import Player from '$lib/Player.svelte';
 	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 
 	let { data }: { data: PageData } = $props();
 	let videoPath = $state({ value: '' });
@@ -15,9 +16,11 @@
 	let episode = 1;
 	if (data.episode) episode = data.episode;
 
+	let epLimit = $state({ min: 0, max: 1 });
+
 	let relatedEpisodes = $state<
 		{
-			name: string | null | undefined;
+			num: string | null | undefined;
 			href: string | null | undefined;
 			mode: string | null | undefined;
 		}[]
@@ -41,21 +44,40 @@
 						return;
 					}
 
-					let ul = doc.querySelector('#episode_related');
-					let lis = ul?.querySelectorAll('li');
-					lis?.forEach((li) => {
-						let a = li.querySelector('a');
+					let id = (doc.querySelector('input#movie_id') as HTMLInputElement)?.value;
+					let alias = (doc.querySelector('input#alias_anime') as HTMLInputElement)?.value;
+					let default_ep = (doc.querySelector('input#default_ep') as HTMLInputElement)?.value;
+					let _e = doc.querySelector('#episode_page a');
+					let ep_start = _e?.getAttribute('ep_start');
+					let ep_end = _e?.getAttribute('ep_end');
 
-						let name = a?.querySelector('.name')?.textContent;
-						let href = a?.getAttribute('href');
-						let mode = a?.querySelector('.cate')?.textContent;
+					epLimit = { min: parseInt(ep_start || '1'), max: parseInt(ep_end || '1') };
 
-						relatedEpisodes.push({
-							name,
-							href,
-							mode
+					fetch(
+						`https://ajax.gogocdn.net/ajax/load-list-episode?ep_start=${ep_start}&ep_end=${ep_end}&id=${id}&default_ep=${default_ep}&alias=${alias}`
+					)
+						.then((res) => res.text())
+						.then((json) => {
+							let html = json;
+							let parser = new DOMParser();
+							let doc = parser.parseFromString(html, 'text/html');
+
+							let ul = doc.querySelector('#episode_related');
+							let lis = ul?.querySelectorAll('li');
+							lis?.forEach((li) => {
+								let a = li.querySelector('a');
+
+								let num = a?.querySelector('.name')?.textContent;
+								let href = a?.getAttribute('href');
+								let mode = a?.querySelector('.cate')?.textContent;
+
+								relatedEpisodes.push({
+									num,
+									href: href?.replace(' /', '/watch?id=').replace('-episode-', '&episode='),
+									mode
+								});
+							});
 						});
-					});
 
 					console.log(iframe.src);
 					fetch(`/api/`, {
@@ -69,7 +91,7 @@
 					})
 						.then((res) => res.json())
 						.then((json) => {
-							console.log(json);
+							//console.log(json);
 							let html = json;
 							let parser = new DOMParser();
 							let doc = parser.parseFromString(html, 'text/html');
@@ -186,8 +208,60 @@
 	<span class="error">Error!: {error}</span>
 {/if}
 
+<div class="episodes-container">
+	<h2 class="top">Showing {epLimit.min}-{epLimit.max}</h2>
+	<div class="episodes">
+		{#each relatedEpisodes as item}
+			<div class="episode-item">
+				<a
+					href={item.href || '#'}
+					role="button"
+					onclick={() => goto(item.href || '#')}
+					onkeydown={(e) => e.key === 'Enter' && goto(item.href || '#')}
+					>{item.num} <span>| {item.mode}</span></a
+				>
+			</div>
+		{/each}
+	</div>
+</div>
+
 <style>
 	.error {
 		color: var(--fgColor-danger);
+	}
+
+	.episodes-container {
+		text-align: center;
+		width: 40vw;
+		margin: 0 auto;
+		height: auto;
+		justify-content: center;
+	}
+
+	.episodes {
+		display: flex;
+		flex-wrap: wrap;
+		width: 100%;
+		height: auto;
+		justify-content: center;
+		margin: 0 auto;
+		flex-direction: row;
+	}
+
+	.episode-item {
+		margin: 0.5rem;
+	}
+
+	.episode-item a {
+		color: var(--fgColor-default);
+		text-decoration: none;
+	}
+
+	.episode-item a:hover {
+		color: var(--fgColor-accent-hover);
+	}
+
+	.episode-item span {
+		color: var(--fgColor-muted);
 	}
 </style>
