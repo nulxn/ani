@@ -158,5 +158,13 @@
 
 <h1>watch</h1>
 <Player url={videoPath} />
+{#if error.length > 0}
+	<span class="error">Error!: {error}</span>
+{/if}
 
-<p>error: {error}</p>
+<style>
+	.error {
+		color: var(--fgColor-danger);
+		
+	}
+</style>
