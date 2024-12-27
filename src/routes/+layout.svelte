@@ -89,16 +89,15 @@
 	</h1>
 	<nav>
 		<div class="searchbar">
-			<input
-				id="search"
-				type="text"
-				placeholder="Search"
-				style="padding-left: 5px;"
-				bind:value={term}
-			/>
-			<div class="results">
+			<input id="search" type="text" placeholder="Search" bind:value={term} />
+			<div
+				class="results"
+				style={searched.length === 0 && !searching && term === '' ? 'display: none;' : ''}
+			>
 				{#if searching && searched.length === 0}
 					<p>Searching ...</p>
+				{:else if !searching && searched.length === 0 && term !== ''}
+					<p>No Results!</p>
 				{:else}
 					{#each searched as result}
 						<div class="result">
@@ -136,8 +135,8 @@
 
 		--bgColor-default: #141416;
 		--bgColor-muted: #242426;
-		--borderColor-default: #2a2a2c;
-		--borderColor-emphasis: #38383a;
+		--borderColor-default: #363638;
+		--borderColor-emphasis: #4e4e50;
 
 		--fgColor-default: #f2f2f7;
 		--fgColor-muted: #aeaeb2;
@@ -191,6 +190,22 @@
 
 	.searchbar {
 		position: relative;
+		padding-right: 1rem;
+	}
+
+	.searchbar input {
+		padding: 0.5rem;
+		border: var(--borderWidth-default) solid var(--borderColor-default);
+		border-radius: var(--borderRadius-default);
+		background-color: var(--bgColor-muted);
+		color: var(--fgColor-default);
+		transition: width 0.3s ease;
+	}
+
+	.searchbar input:focus {
+		width: 300px;
+		outline: none;
+		border-color: var(--fgColor-accent);
 	}
 
 	.results {
@@ -201,7 +216,6 @@
 		max-height: 200px;
 		background-color: var(--bgColor-muted);
 		border: var(--borderWidth-default) solid var(--borderColor-default);
-		border-radius: var(--borderRadius-default);
 		overflow-y: auto;
 	}
 
