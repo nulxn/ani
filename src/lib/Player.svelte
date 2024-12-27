@@ -4,11 +4,13 @@
 	let notSet = $derived(url.value === '');
 	let currentUrl = $state('');
 	let modUrl = $derived(currentUrl + '/stream?path=' + url.value);
-	import shaka from 'shaka-player';
 	import { onMount } from 'svelte';
+	//import shaka from 'shaka-player';
+	let _doc = $state() as Document;
 
 	onMount(() => {
 		currentUrl = window.location.origin;
+		_doc = document;
 	});
 
 	$effect(() => {
@@ -56,4 +58,45 @@
 	{:else}
 		<video id="video" controls> </video>
 	{/if}
+	<div class="control">
+		<button onclick={() => _('#video', _doc).currentTime(10)}>Forward</button>
+		<button onclick={() => _('#video', _doc).currentTime(-10)}>Backward</button>
+	</div>
 </div>
+
+<style>
+	.player {
+		width: 40vw;
+		margin: 0 auto;
+		height: auto;
+		padding: 2rem;
+		background-color: var(--bgColor-muted);
+		border-width: var(--borderWidth-default);
+		border-radius: var(--borderRadius-default);
+		border-color: var(--borderColor-default);
+		border-style: solid;
+	}
+
+	#video {
+		width: 100%;
+		height: 90%;
+		border-width: var(--borderWidth-default);
+		border-radius: var(--borderRadius-default);
+		border-color: var(--borderColor-emphasis);
+		border-style: solid;
+	}
+
+	.control {
+		display: flex;
+		justify-content: space-around;
+	}
+
+	.control button {
+		padding: 0.5rem 1rem;
+		background-color: var(--bgColor-default);
+		color: var(--fgColor-default);
+		border: none;
+		border-radius: 0.5rem;
+		cursor: pointer;
+	}
+</style>

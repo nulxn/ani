@@ -1,5 +1,6 @@
 <script lang="ts">
 	let { children } = $props();
+	import 'shaka-player/dist/controls.css';
 
 	let searched = $state<
 		{ href: string | null; title: string | undefined; img: string | undefined }[]
@@ -124,6 +125,7 @@
 
 		--bgColor-default: #141416;
 		--bgColor-muted: #242426;
+		--bgColor-inset: #010409;
 		--borderColor-default: #363638;
 		--borderColor-emphasis: #4e4e50;
 
