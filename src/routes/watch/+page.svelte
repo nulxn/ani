@@ -15,6 +15,14 @@
 	let episode = 1;
 	if (data.episode) episode = data.episode;
 
+	let relatedEpisodes = $state<
+		{
+			name: string | null | undefined;
+			href: string | null | undefined;
+			mode: string | null | undefined;
+		}[]
+	>([]);
+
 	let error = $state('');
 	if (vaidPage && browser) {
 		let pageUrl = `https://anitaku.bz/${data.id}-episode-${episode}`;
@@ -32,6 +40,22 @@
 						error = 'IFrame not found';
 						return;
 					}
+
+					let ul = doc.querySelector('#episode_related');
+					let lis = ul?.querySelectorAll('li');
+					lis?.forEach((li) => {
+						let a = li.querySelector('a');
+
+						let name = a?.querySelector('.name')?.textContent;
+						let href = a?.getAttribute('href');
+						let mode = a?.querySelector('.cate')?.textContent;
+
+						relatedEpisodes.push({
+							name,
+							href,
+							mode
+						});
+					});
 
 					console.log(iframe.src);
 					fetch(`/api/`, {
@@ -165,6 +189,5 @@
 <style>
 	.error {
 		color: var(--fgColor-danger);
-		
 	}
 </style>
