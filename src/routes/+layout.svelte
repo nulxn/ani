@@ -1,6 +1,5 @@
 <script lang="ts">
 	let { children } = $props();
-	import { browser } from '$app/environment';
 
 	let searched = $state<
 		{ href: string | null; title: string | undefined; img: string | undefined }[]
@@ -29,16 +28,6 @@
 					searched.push(data);
 				});
 			});
-	}
-
-	let headerHeight = $state(0);
-	let footerHeight = $state(0);
-	let windowHeight = $state(0);
-	let mainHeight = $derived(windowHeight - headerHeight - footerHeight - 32);
-	if (browser) {
-		windowHeight = window.innerHeight;
-		headerHeight = document.querySelector('header')?.clientHeight ?? 0;
-		footerHeight = document.querySelector('footer')?.clientHeight ?? 0;
 	}
 
 	let term = $state('');
@@ -116,7 +105,7 @@
 
 <div id="searched"></div>
 
-<main style="height: {mainHeight}px;">
+<main>
 	{@render children()}
 </main>
 
