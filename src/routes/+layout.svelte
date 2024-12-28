@@ -36,6 +36,7 @@
 	let justSearchedFor = $state('');
 	$effect(() => {
 		term;
+		if (term === '') searched = [];
 		if (term === '' || justSearchedFor === term) return;
 
 		if (!searching) {
@@ -216,6 +217,7 @@
 		background-color: var(--bgColor-muted);
 		border: var(--borderWidth-default) solid var(--borderColor-default);
 		overflow-y: auto;
+		z-index: 5;
 	}
 
 	.result {
@@ -223,6 +225,7 @@
 		align-items: center;
 		padding: 0.5rem;
 		border-bottom: var(--borderWidth-default) solid var(--borderColor-default);
+		z-index: 10;
 	}
 
 	.result img {
@@ -230,5 +233,6 @@
 		height: 50px;
 		object-fit: cover;
 		margin-right: 0.5rem;
+		z-index: 15;
 	}
 </style>
